@@ -1,0 +1,9 @@
+# Inventario Exposure Audit (formato texto)
+# Formato: <host-ssh> [ip-publico ...]
+# - host-ssh: nome ou IP usado no SSH (respeita ~/.ssh/config)
+# - ip-publico: opcional; IP(s) a testar externamente (ex.: host atras de NAT)
+# Linhas iniciadas por '#' sao comentarios.
+
+srv-web-01.example.net 203.0.113.5
+srv-db-01.example.net
+10.0.0.7 198.51.100.7 2001:db8:10::7

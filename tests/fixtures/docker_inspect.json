@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "4f1c2a9b8e7d6c5b4a39281706f5e4d3c2b1a09f8e7d6c5b4a39281706f5e4d3",
+    "Name": "/webapp",
+    "NetworkSettings": {
+      "Ports": {"80/tcp": [{"HostIp": "0.0.0.0", "HostPort": "8080"}]},
+      "Networks": {"bridge": {"IPAddress": "172.17.0.2", "GlobalIPv6Address": ""}}
+    }
+  },
+  {
+    "Id": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+    "Name": "/admin-ui",
+    "NetworkSettings": {
+      "Ports": {"9000/tcp": [{"HostIp": "127.0.0.1", "HostPort": "9000"}], "9443/tcp": null},
+      "Networks": {"bridge": {"IPAddress": "172.17.0.3"}}
+    }
+  }
+]

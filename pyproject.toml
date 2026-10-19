@@ -1,0 +1,21 @@
+# Exposure Audit - auditoria tecnica de exposicao de servicos
+# Autor: Jose Edson Moreno Jr. <edson.moreno@gmail.com>
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exposure-audit"
+version = "0.1"
+description = "Auditoria tecnica de exposicao de servicos em hosts Linux (somente leitura)"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Jose Edson Moreno Jr.", email = "edson.moreno@gmail.com" }]
+dependencies = []
+
+[project.scripts]
+exposure-audit = "exposure_audit.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

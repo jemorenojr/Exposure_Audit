@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<nmaprun scanner="nmap" args="nmap -n -Pn -oX - --max-retries 2 --max-rate 300 -6 -sS -p T:22,9100 2001:db8:10::5" start="1760868400" version="7.94" xmloutputversion="1.05">
+<host starttime="1760868400" endtime="1760868405"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="2001:db8:10::5" addrtype="ipv6"/>
+<ports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="56"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9100"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="jetdirect" method="table" conf="3"/></port>
+</ports>
+</host>
+<runstats><finished time="1760868405" elapsed="5.0" exit="success"/><hosts up="1" down="0" total="1"/></runstats>
+</nmaprun>

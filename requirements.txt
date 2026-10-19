@@ -1,0 +1,6 @@
+# Exposure Audit: o runtime usa somente a biblioteca padrao do Python (>= 3.10).
+# Ferramentas externas usadas nos hosts/scanner: iproute2 (ip, ss), iptables,
+# nftables, ipset, docker (opcionais conforme o host) e nmap (scanner).
+#
+# Instalacao do proprio pacote em modo editavel (expoe o comando exposure-audit):
+-e .

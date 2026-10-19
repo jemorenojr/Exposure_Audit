@@ -1,0 +1,53 @@
+# Exposure Audit - arquivos que nao vao para o repositorio publico
+
+# --- Dados reais da auditoria (NUNCA publicar) ---
+# Resultados por execucao: IPs, regras de firewall, servicos e coleta bruta.
+output/
+# Inventarios reais; somente os exemplos sao versionados.
+hosts*.txt
+hosts*.csv
+!hosts.example.txt
+!hosts.example.csv
+
+# --- Repositorio privado separado ---
+# Especificacao do agente e handoffs (mantidos em repositorio proprio).
+docs/Agents/
+
+# --- Ambiente e build (mesmas entradas gravadas pelo ambiente.sh) ---
+*.pyc
+*.pyo
+*.orig
+*.bak
+*.rej
+*~
+cur/
+tmp/
+.env/
+.codex/
+__pycache__/
+*.DS_Store
+*.project
+*.dbeaver
+*.pydevproject
+*.settings
+*.sqlite
+*.sqlite-journal
+**/src/logs
+**/src/tmp
+*.tar.bz2
+build/
+
+# --- Python ---
+.venv/
+*.egg-info/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Editores e ferramentas locais ---
+.vscode/
+.idea/
+.claude/settings.local.json

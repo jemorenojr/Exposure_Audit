@@ -1,0 +1,516 @@
+{
+ "nftables": [
+  {
+   "metainfo": {
+    "version": "1.0.9",
+    "release_name": "Old Doc Yak #3",
+    "json_schema_version": 1
+   }
+  },
+  {
+   "table": {
+    "family": "inet",
+    "name": "firewalld",
+    "handle": 1
+   }
+  },
+  {
+   "chain": {
+    "family": "inet",
+    "table": "firewalld",
+    "name": "filter_INPUT",
+    "handle": 1,
+    "type": "filter",
+    "hook": "input",
+    "prio": 10,
+    "policy": "accept"
+   }
+  },
+  {
+   "chain": {
+    "family": "inet",
+    "table": "firewalld",
+    "name": "filter_INPUT_ZONES",
+    "handle": 1
+   }
+  },
+  {
+   "chain": {
+    "family": "inet",
+    "table": "firewalld",
+    "name": "filter_IN_public",
+    "handle": 1
+   }
+  },
+  {
+   "chain": {
+    "family": "inet",
+    "table": "firewalld",
+    "name": "filter_IN_public_allow",
+    "handle": 1
+   }
+  },
+  {
+   "set": {
+    "family": "inet",
+    "name": "admins",
+    "table": "firewalld",
+    "type": "ipv4_addr",
+    "handle": 9,
+    "flags": [
+     "interval"
+    ],
+    "elem": [
+     {
+      "prefix": {
+       "addr": "203.0.113.0",
+       "len": 24
+      }
+     },
+     "198.51.100.7"
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT",
+    "handle": 10,
+    "expr": [
+     {
+      "vmap": {
+       "key": {
+        "ct": {
+         "key": "state"
+        }
+       },
+       "data": {
+        "set": [
+         [
+          "established",
+          {
+           "accept": null
+          }
+         ],
+         [
+          "related",
+          {
+           "accept": null
+          }
+         ],
+         [
+          "invalid",
+          {
+           "drop": null
+          }
+         ]
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT",
+    "handle": 11,
+    "expr": [
+     {
+      "match": {
+       "op": "in",
+       "left": {
+        "ct": {
+         "key": "status"
+        }
+       },
+       "right": "dnat"
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT",
+    "handle": 12,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "meta": {
+         "key": "iifname"
+        }
+       },
+       "right": "lo"
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT",
+    "handle": 13,
+    "expr": [
+     {
+      "jump": {
+       "target": "filter_INPUT_ZONES"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT",
+    "handle": 14,
+    "expr": [
+     {
+      "reject": {
+       "type": "icmpx",
+       "expr": "admin-prohibited"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT_ZONES",
+    "handle": 20,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "meta": {
+         "key": "iifname"
+        }
+       },
+       "right": "eth0"
+      }
+     },
+     {
+      "goto": {
+       "target": "filter_IN_public"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_INPUT_ZONES",
+    "handle": 21,
+    "expr": [
+     {
+      "goto": {
+       "target": "filter_IN_public"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public",
+    "handle": 30,
+    "expr": [
+     {
+      "jump": {
+       "target": "filter_IN_public_allow"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public",
+    "handle": 31,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "meta": {
+         "key": "l4proto"
+        }
+       },
+       "right": {
+        "set": [
+         "icmp",
+         "ipv6-icmp"
+        ]
+       }
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public_allow",
+    "handle": 40,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "tcp",
+         "field": "dport"
+        }
+       },
+       "right": 22
+      }
+     },
+     {
+      "match": {
+       "op": "in",
+       "left": {
+        "ct": {
+         "key": "state"
+        }
+       },
+       "right": {
+        "set": [
+         "new",
+         "untracked"
+        ]
+       }
+      }
+     },
+     {
+      "counter": {
+       "packets": 0,
+       "bytes": 0
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public_allow",
+    "handle": 41,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "ip",
+         "field": "saddr"
+        }
+       },
+       "right": "@admins"
+      }
+     },
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "tcp",
+         "field": "dport"
+        }
+       },
+       "right": 8443
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public_allow",
+    "handle": 42,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "ip6",
+         "field": "daddr"
+        }
+       },
+       "right": {
+        "prefix": {
+         "addr": "fe80::",
+         "len": 64
+        }
+       }
+      }
+     },
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "udp",
+         "field": "dport"
+        }
+       },
+       "right": 546
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public_allow",
+    "handle": 43,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "tcp",
+         "field": "dport"
+        }
+       },
+       "right": {
+        "set": [
+         {
+          "range": [
+           60000,
+           61000
+          ]
+         }
+        ]
+       }
+      }
+     },
+     {
+      "limit": {
+       "rate": 10,
+       "per": "second",
+       "burst": 5
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "rule": {
+    "family": "inet",
+    "table": "firewalld",
+    "chain": "filter_IN_public_allow",
+    "handle": 44,
+    "expr": [
+     {
+      "match": {
+       "op": "==",
+       "left": {
+        "payload": {
+         "protocol": "tcp",
+         "field": "dport"
+        }
+       },
+       "right": 3389
+      }
+     },
+     {
+      "xt": {
+       "type": "match",
+       "name": "geoip"
+      }
+     },
+     {
+      "accept": null
+     }
+    ]
+   }
+  },
+  {
+   "table": {
+    "family": "ip",
+    "name": "filter",
+    "handle": 2
+   }
+  },
+  {
+   "chain": {
+    "family": "ip",
+    "table": "filter",
+    "name": "INPUT",
+    "handle": 1,
+    "type": "filter",
+    "hook": "input",
+    "prio": 0,
+    "policy": "accept"
+   }
+  },
+  {
+   "rule": {
+    "family": "ip",
+    "table": "filter",
+    "chain": "INPUT",
+    "handle": 50,
+    "expr": [
+     {
+      "xt": {
+       "type": "match",
+       "name": "recent"
+      }
+     },
+     {
+      "drop": null
+     }
+    ]
+   }
+  }
+ ]
+}

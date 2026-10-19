@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nmaprun scanner="nmap" args="nmap -n -oX - -p 22 192.0.2.99" version="7.94">
+<host><status state="down" reason="no-response" reason_ttl="0"/><address addr="192.0.2.99" addrtype="ipv4"/></host>
+</nmaprun>

@@ -1,0 +1,4 @@
+host,public_ip,ssh_user,ssh_port,name
+srv-web-01.example.net,203.0.113.5,auditor,,srv-web-01
+10.0.0.7,198.51.100.7;2001:db8:10::7,auditor,2222,srv-app-01
+srv-db-01.example.net,,,,srv-db-01
