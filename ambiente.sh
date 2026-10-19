@@ -2,24 +2,24 @@
 ###########################################################################
 #
 # Nome       : ambiente.sh
-# Descricao  : Configura um ambiente virtual Python local ao projeto.
+# Descricao  : Configura o ambiente virtual Python local do Exposure Audit.
 #              Compatível com bash, zsh, dash e outros shells POSIX.
-#              Deve ser carregado no diretório do componente
-#              (syslog-digest/ ou syslog-web/), que contém o
-#              requirements.txt e recebe o venv em .env/:
+#              Deve ser carregado (source) na raiz do projeto, que contém
+#              o requirements.txt; o venv fica em .env/usr e os artefatos
+#              de build/cache em build/:
 #
-#                      cd syslog-digest && source ambiente.sh
+#                      cd Exposure_Audit && . ./ambiente.sh
 #
-#              ou:
-#
-#                      cd syslog-web && . ./ambiente.sh
+#              O requirements.txt instala o próprio pacote em modo
+#              editável (-e .), disponibilizando o comando exposure-audit.
 # Author     : Jose Edson Moreno Jr.
 # Email      : edson.moreno@gmail.com
-# Versao     : 0.5
+# Versao     : 0.6
 # Data       : 2026-09-28
 # copyright  : (c) 2026 by Edson Moreno
-# Parametros : prog
-# Retorno    :
+# Parametros : --make-vars  imprime as variáveis de diretório no formato
+#                           do make e encerra, sem criar o venv
+# Retorno    : 0 = ambiente ativado; 1 = falha (mensagem em stderr)
 #
 # CHANGELOG  : 0.2 - Corrige tratamento de erros, recuperação de venv incompleto
 #              e remove dependência desnecessária de pip3 global.
@@ -28,6 +28,11 @@
 #              0.5 - 2026-09-28: Separação syslog-digest/syslog-web. Instala
 #              somente o requirements.txt do componente em toda execução e
 #              grava o .gitignore na raiz do repositório.
+#              (0.2 a 0.5: histórico do projeto de origem do script.)
+#              0.6 - 2026-10-19: Adaptado ao Exposure Audit: cabeçalho,
+#              comentários e mensagens; exige Python >= 3.10; avisa se
+#              o cliente ssh não existir; .gitignore passa a proteger
+#              output/, inventários reais e docs/Agents/.
 ############################################################################
 
 
@@ -175,6 +180,22 @@ PYTHON3=$(command -v python3) || {
     return 1 2>/dev/null || exit 1
 }
 
+# pyproject.toml exige Python >= 3.10 (anotações "X | None" avaliadas em
+# tempo de execução nas dataclasses).
+"$PYTHON3" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)' || {
+    mensagem_erro "Exposure Audit exige Python >= 3.10; encontrado: $("$PYTHON3" --version 2>&1)."
+    return 1 2>/dev/null || exit 1
+}
+
+###############################################################################
+# Ferramentas externas do controlador
+###############################################################################
+
+# O cliente OpenSSH só é necessário para hosts remotos e scanner via SSH;
+# "--host local" funciona sem ele, por isso apenas avisa.
+comando_existe ssh || printf '%s\n' \
+    "AVISO: cliente ssh não encontrado; somente '--host local' funcionará."
+
 ###############################################################################
 # Criação/validação do ambiente virtual
 ###############################################################################
@@ -247,15 +268,14 @@ if [ "$venv_valido" -eq 0 ]; then
 fi
 
 ###############################################################################
-# Dependências do componente
+# Dependências do projeto
 #
-# Cada componente (syslog-digest, syslog-web) mantém o próprio
-# requirements.txt, para que uma máquina só com o digest não receba as
-# dependências da interface web.
+# O requirements.txt do projeto instala o pacote exposure_audit em modo
+# editável (-e .); o pacote usa somente a biblioteca padrão.
 ###############################################################################
 
 [ -f "$REQUIREMENTS" ] || {
-    mensagem_erro "requirements.txt não encontrado em ${PROJECT_HOME}. Carregue o ambiente.sh a partir de syslog-digest/ ou syslog-web/."
+    mensagem_erro "requirements.txt não encontrado em ${PROJECT_HOME}. Carregue o ambiente.sh a partir da raiz do projeto Exposure_Audit."
     return 1 2>/dev/null || exit 1
 }
 
@@ -285,7 +305,9 @@ printf '%s\n' "Instalando dependências de ${REQUIREMENTS}..."
 # Cria/atualiza o .gitignore
 ###############################################################################
 
-# O .gitignore fica na raiz do repositório, acima do diretório do componente.
+# O .gitignore fica na raiz do repositório git (a raiz do projeto).
+# Entradas do projeto protegem dados reais de auditoria (output/,
+# inventários) e o repositório privado docs/Agents/.
 GIT_TOP=$(git -C "$PROJECT_HOME" rev-parse --show-toplevel 2>/dev/null) || GIT_TOP=""
 GITIGNORE="${GIT_TOP:+${GIT_TOP}/.gitignore}"
 
@@ -319,6 +341,13 @@ __pycache__/
 **/src/tmp
 *.tar.bz2
 build/
+*.egg-info/
+output/
+hosts*.txt
+hosts*.csv
+!hosts.example.txt
+!hosts.example.csv
+docs/Agents/
 EOF
 
 ###############################################################################
